@@ -1,5 +1,8 @@
 function x = GaussPivot(A,b)
 
+% Code from https://www.chegg.com/homework-help/questions-and-answers
+% /write-matlab-gauss-elimination-using-complete-pivoting-code-partial-pivoting-following-for-q26806224
+
 % GaussPivot: Gauss elimination pivoting
 
 % x = GaussPivot(A,b): Gauss elimination with pivoting.
