@@ -6,7 +6,7 @@ q_new = q_init;
 % L = (speye(size(D,1))-spdiags((delta_t*u))*D);
 L = (speye(size(D,1))-(delta_t*u)*D);
 decompL = decomposition(L);
-for i = 1:(target_time/(delta_t))
+for i = 1:(target_time/delta_t)
     q_new = decompL\q_new;
 %     plot(q_new,'k-')
 %     ylim([0 1])
