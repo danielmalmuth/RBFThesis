@@ -8,6 +8,8 @@ for i = 1:(target_time/delta_t)
     k3 = (delta_t*u).*D*(q_new + k2./2);
     k4 = (delta_t*u).*D*(q_new + k3);
     q_new = q_new + (k1 + 2.*k2 + 2.*k3 + k4)./6;
+%     plot(q_new)
+%     pause(0.01)
 end
 
 end
