@@ -1,4 +1,5 @@
 clc
+close all
 
 % Functions
 % q = @(x) exp(-(60.*(x-0.1)).^2); % initial distribution
@@ -46,8 +47,12 @@ for j = 1:numspaces
 %     D(1,n) = (-8/(12*h(j)));
 %     q_approx = rk4_adv(delta_t(j),u,D,q_vec,target_time);
 
-% Upwinding Scheme
-    q_approx = fe_adv_up(delta_t(j),u,q_vec,target_time,h(j));
+% % Upwinding Scheme
+%     q_approx = fe_adv_up(delta_t(j),u,q_vec,target_time,h(j));
+
+% Semi-Legrangian Advection
+    q_approx = fe_adv_sla(delta_t(j),u,x,q_vec,target_time);
+
     
     
 %     q_true = q_sol(u,x,target_time)';
