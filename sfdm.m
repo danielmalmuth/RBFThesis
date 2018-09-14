@@ -11,13 +11,14 @@ q_sol = @(u,x,t) q(x-u*t); % true solution
 a = 0; % endpoints
 b = 1;
 
-u = @(t) -sin(2*pi*t); % u in advection equation
+u = @(t) sin(2*pi*t); % u in advection equation
+% u = @(t) 1+0*t; % u in advection equation
 % u_neg = @(t) -u(t);
 target_time = 1;
 numspaces = 8; % number of h to test
 error = zeros(numspaces,1);
 max_u = u(fminbnd(@(t) -u(t),0,target_time)); % Max value of u function
-cfl = 0.5; % CFL number
+cfl = 1; % CFL number
 
 h = 0.125./2.^(1:numspaces); % vector of h values
 
@@ -25,8 +26,8 @@ delta_t = (cfl*h)/abs(max_u); % delta ts based on h values
 
 for j = 1:numspaces
     n = (b-a)/h(j);
-    x = linspace(a,b,n+1); x = x(1:n);
-    q_vec = q(x)';
+    x = linspace(a,b,n+1)'; x = x(1:n);
+    q_vec = q(x);
 
 % % Centered Difference 2nd order with RK4
 %     pos_center = (1/(2*h(j)))*ones((n),1);
