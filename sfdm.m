@@ -1,32 +1,31 @@
 clc
-close all
+% close all
 
 % Functions
 % q = @(x) exp(-(60.*(x-0.1)).^2); % initial distribution
 % q = @(x) cos(2*pi*x); % initial distribution
-q = @(x) exp(cos(2*pi*x)); % initial distribution
-q_sol = @(u,x,t) q(x-u*t); % true solution
+q = @(x) exp(cos(2.*pi.*x)); % initial distribution
+q_sol = @(u,x,t) q(x-u.*t); % true solution
 
 % Variables
 a = 0; % endpoints
 b = 1;
 
-u = @(t) -sin(2*pi*t); % u in advection equation
-% u_neg = @(t) -u(t);
+u = @(t,x) -sin(2.*pi.*t).*(1+sin(2.*pi.*x)); % u in advection equation
 target_time = 1;
 numspaces = 8; % number of h to test
 error = zeros(numspaces,1);
-max_u = u(fminbnd(@(t) -u(t),0,target_time)); % Max value of u function
-cfl = 0.5; % CFL number
+max_u = 2;%u(fminbnd(@(t,x) -u(t,x),0,target_time)); % Max value of u function
+cfl = 1; % CFL number
 
-h = 0.125./2.^(1:numspaces); % vector of h values
+h = 0.125./2.^(1:numspaces)'; % vector of h values
 
 delta_t = (cfl*h)/abs(max_u); % delta ts based on h values
 
 for j = 1:numspaces
     n = (b-a)/h(j);
-    x = linspace(a,b,n+1); x = x(1:n);
-    q_vec = q(x)';
+    x = linspace(a,b,n+1); x = x(1:n)';
+    q_vec = q(x);
 
 % % Centered Difference 2nd order with RK4
 %     pos_center = (1/(2*h(j)))*ones((n),1);
@@ -51,7 +50,7 @@ for j = 1:numspaces
 %     q_approx = fe_adv_up(delta_t(j),u,q_vec,target_time,h(j));
 
 % Semi-Legrangian Advection
-    q_approx = fe_adv_sla(delta_t(j),u,x,q_vec,target_time);
+    q_approx = rk4_adv_sla(delta_t(j),u,x,q_vec,target_time);
 
     
     
@@ -64,3 +63,6 @@ loglog(h,error,'x-')
 xlabel('h')
 ylabel('Relative Error')
 title('Relative Error')
+
+x = polyfit(log(h),log(error),1);
+order = round(x(1))
