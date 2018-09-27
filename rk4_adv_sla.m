@@ -13,11 +13,16 @@ for i = 1:round((target_time/delta_t))
     x_new(id) = x_new(id)-1;
     id = x_new < 0;
     x_new(id) = x_new(id)+1;
-    q_new = interp1([-1+x(2:end);x;1+x(2:end)],...
-        [q_new(2:end);q_new;q_new(2:end)],x_new,'spline');
+%     q_new = interp1([-1+x(2:end);x;1+x(2:end)],...
+%         [q_new(2:end);q_new;q_new(2:end)],x_new,'spline');
+
+    tree = KDTreeSearcher(x);
     
-%     lam = rbffit_test(x,y,q_new,"Backslash",true,0,1);
-%     q_new = rbfval2(lam,x,y,x_new,y,1);
+    for j = 1:length(x)
+        idx = knnsearch(tree,x_new(j),'k',4)
+        lam = rbffit_test_1D(x(idx),q_new(idx),"Backslash",true,0,1);
+        q_new = rbfval2_1D(lam,x(idx),x_new,1);
+    end
 %     plot(x,q_new,'k-')
 %     ylim([0 3])
 %     pause(0.1);
