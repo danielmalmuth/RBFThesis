@@ -65,4 +65,4 @@ ylabel('Relative Error')
 title('Relative Error')
 
 x = polyfit(log(h),log(error),1);
-order = round(x(1))
+order = x(1);
