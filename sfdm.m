@@ -13,7 +13,7 @@ b = 1;
 
 u = @(t,x) -sin(2.*pi.*t).*(1+sin(2.*pi.*x)); % u in advection equation
 target_time = 1;
-numspaces = 6; % number of h to test
+numspaces = 4; % number of h to test
 error = zeros(numspaces,1);
 max_u = 2;%u(fminbnd(@(t,x) -u(t,x),0,target_time)); % Max value of u function
 cfl = 1; % CFL number

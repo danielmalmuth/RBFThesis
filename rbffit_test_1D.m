@@ -56,11 +56,12 @@ clear xd1 xd2;
 % and will have numerical trouble when r=0.  It should be 0 when r=0, so we
 % explicity make this the case.
 id = 1:(n+1):n^2;    % indicies for the diagonal of A (i.e. where r=0).
-A(id) = 1;           % make the distance 1 since log(1) = 0.
+% A(id) = 1;           % make the distance 1 since log(1) = 0.
 % Compute the TPS interpolation matrix.  Note that we are dealing with the
 % distances squared.  The TPS kernel with distances squared reduces to
 % 0.5*A*log(A)
-A = 0.5*A.*log(A);
+% A = 0.5*A.*log(A);
+A = A.^(3/2);
 
 % Add on the extra polynomial conditions.
 ev = ones(n,1);

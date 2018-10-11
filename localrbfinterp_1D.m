@@ -1,6 +1,6 @@
 function vec = localrbfinterp_1D(lam,x_star,x,deg)
     r = abs(x_star-x);
-    rbf = r.^2.*log(r+eps);
+    rbf = r.^3;
     if deg == 0
         poly = 1;
     else
