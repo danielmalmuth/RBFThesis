@@ -1,16 +1,16 @@
-function q_new = rk4_adv_sla(delta_t,u_func,x,q_init,target_time)
+function q_new = rk4_adv_sla(delta_t,u_func,x,q_init,target_time,deg)
 
 q_new = q_init;
 q_new_ext = [q_new;q_new;q_new];
 
-%x_circ = [cos(2*pi*x) sin(2*pi*x)];
 x_ext = [x-1;x;x+1];
 tree = KDTreeSearcher(x_ext);
 
-% for i = 1:length(x)
-%     idx = knnsearch(tree,x(i),'k',5);
-%     S(i).d = rbffit_test_1D(x_ext(idx),q_new_ext(idx),"Backslash",true,0,2);
-% end
+for i = 1:length(x_ext)
+    idx = knnsearch(tree,x_ext(i),'k',5);
+    S{i}.neighbors = idx;
+    S{i}.d = localinterpmat_1D(x_ext(idx),deg);
+end
 
 for i = 1:round((target_time/delta_t))
     k1 = -delta_t.*u_func(i*delta_t,x);
@@ -27,12 +27,16 @@ for i = 1:round((target_time/delta_t))
 %         [q_new(2:end);q_new;q_new(2:end)],x_new,'spline');
 %     
 
-%     x_new_circ = [cos(2*pi*x_new) sin(2*pi*x_new)];
     for j = 1:length(x)
-        idx = knnsearch(tree,x_new(j),'k',5);
-        lam = rbffit_test_1D(x_ext(idx),q_new_ext(idx),"Backslash",true,0,2);
-%         lam = S(idx).d;
-        q_new(j) = localrbfinterp_1D(lam,x_new(j),x_ext(idx),2); % Local method
+        % idx = knnsearch(tree,x_new(j),'k',5);
+        idx = knnsearch(tree,x_new(j),'k',1);
+        lam = S{idx}.d\[q_new_ext(S{idx}.neighbors);zeros(deg+1,1)];
+        
+        
+%         lam = rbffit_test_1D(x_ext(idx),q_new_ext(idx),"Backslash",true,0,2);
+%         q_new(j) = localrbfinterp_1D(lam,x_new(j),x_ext(idx),2); % Local method
+       
+        q_new(j) = localrbfinterp_1D(lam,x_new(j),x_ext(S{idx}.neighbors),deg); % Local method
         
 %         q_new = rbfval2_1D(lam,x(idx),x_new,1); % Global method
     end
