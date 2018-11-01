@@ -16,7 +16,7 @@ target_time = 1;
 numspaces = 5; % number of h to test
 error = zeros(numspaces,1);
 max_u = 2;%u(fminbnd(@(t,x) -u(t,x),0,target_time)); % Max value of u function
-cfl = 1; % CFL number
+cfl = 4; % CFL number
 
 h = 0.125./2.^(1:numspaces)'; % vector of h values
 
