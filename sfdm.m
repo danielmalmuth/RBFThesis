@@ -1,5 +1,5 @@
 clc
-% close all
+close all
 
 % Functions
 % q = @(x) exp(-(60.*(x-0.1)).^2); % initial distribution
@@ -13,16 +13,16 @@ b = 1;
 
 u = @(t,x) -sin(2.*pi.*t).*(1+sin(2.*pi.*x)); % u in advection equation
 target_time = 1;
-numspaces = 5; % number of h to test
-error = zeros(numspaces,1);
+numtimes = 4; % number of h to test
+error = zeros(numtimes,1);
 max_u = 2;%u(fminbnd(@(t,x) -u(t,x),0,target_time)); % Max value of u function
-cfl = 4; % CFL number
+cfl = 1; % CFL number
 
-h = 0.125./2.^(1:numspaces)'; % vector of h values
+delta_t = 1/16*(1./2.^(1:numtimes))'; % vector of delta_t values
 
-delta_t = (cfl*h)/abs(max_u); % delta ts based on h values
+h = delta_t*max_u/cfl; % hs based on delta_t values
 
-for j = 1:numspaces
+for j = 1:numtimes
     n = (b-a)/h(j);
     x = linspace(a,b,n+1); x = x(1:n)';
     q_vec = q(x);
@@ -59,10 +59,12 @@ for j = 1:numspaces
     error(j) = max(abs(q_vec - q_approx))/max(abs(q_vec));
 end
 
+%%
+
 loglog(h,error,'x-')
 xlabel('h')
-ylabel('Relative Error')
-title('Relative Error')
+ylabel('Relative $L_2$ Error','Interpreter','Latex')
+title('Relative $L_2$ Error','Interpreter','Latex')
 
-x = polyfit(log(h),log(error),1);
+x = polyfit(log(h(2:end)),log(error(2:end)),1);
 order = x(1);
