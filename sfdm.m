@@ -20,14 +20,22 @@ max_u = 2;%u(fminbnd(@(t,x) -u(t,x),0,target_time)); % Max value of u function
 cfl = 3; % CFL number
 
 powers = [3 5 7 9];
-degrees = [4 4 4 4];
+stencils = [9 9 9 9];
+degrees = [1 1 1 1];
 numtests = length(powers);
 
 error = zeros(numtimes,numtests);
 
+% Define hs in terms of delta_ts
 delta_t = 1/16*(1./2.^(1:numtimes))'; % vector of delta_t values
+h = delta_t*max_u/cfl; % hs based on all delta_t values
+% h = repmat(delta_t(end),numtimes,1)*max_u/cfl; % hs based on first delta_t value
 
-h = delta_t*max_u/cfl; % hs based on delta_t values
+% Define delta_ts in terms of hs
+% h = 1/24*(1./2.^(1:numtimes))'; % vector of h values
+% % delta_t = h*cfl/max_u;
+% delta_t = repmat(h(end),numtimes,1)*cfl/max_u;
+
 for i = 1:numtests
     for j = 1:numtimes
         n = floor((b-a)/h(j));
@@ -58,7 +66,7 @@ for i = 1:numtests
 
     % Semi-Legrangian Advection
         q_approx = rk4_sla(delta_t(j),u,x,(b-a),q_vec,target_time,...
-            powers(i),degrees(i));
+            powers(i),stencils(i),degrees(i));
 
 
 
@@ -72,11 +80,6 @@ for i = 1:numtests
     loglog(h,error(:,i),'x-')
     hold on
 end
-xlabel('$h$','Interpreter','Latex')
-ylabel('Relative $L_2$ Error','Interpreter','Latex')
-title('Relative $L_2$ Error, Degree = 4','Interpreter','Latex')
-legend('r^3 - O(5.0083)','r^5 - O(4.0957)','r^7 - O(4.2178)',...
-    'r^9 - O(5.7320)')
 
 orders = zeros(numtests,1);
 
@@ -84,3 +87,11 @@ for i = 1:numtests
     x = polyfit(log(h(2:end)),log(error(2:end,i)),1);
     orders(i) = x(1);
 end
+
+xlabel('$h$','Interpreter','Latex')
+ylabel('Relative $L_2$ Error','Interpreter','Latex')
+title(['Relative $L_2$ Error, Degree = ' num2str(degrees(1))],'Interpreter','Latex')
+legend(['r^' num2str(powers(1)) ', stencil = ' num2str(stencils(1)) ' - O(' num2str(orders(1)) ')'],...
+    ['r^' num2str(powers(2)) ', stencil = ' num2str(stencils(2)) ' - O(' num2str(orders(2)) ')'],...
+    ['r^' num2str(powers(3)) ', stencil = ' num2str(stencils(3)) ' - O(' num2str(orders(3)) ')'],...
+    ['r^' num2str(powers(4)) ', stencil = ' num2str(stencils(4)) ' - O(' num2str(orders(4)) ')'])

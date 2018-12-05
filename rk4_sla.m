@@ -1,6 +1,6 @@
 function q_new = ...
     rk4_sla(delta_t,u_func,x,int_leng,q_init,target_time, ...
-    rbf_exp,deg)
+    rbf_exp,stencil,deg)
 
 q_new = q_init;
 q_new_ext = [q_new;q_new;q_new];
@@ -9,7 +9,7 @@ x_ext = [x-int_leng;x;x+int_leng];
 tree = KDTreeSearcher(x_ext);
 
 for i = 1:length(x)
-    idx = knnsearch(tree,x(i),'k',7);
+    idx = knnsearch(tree,x(i),'k',stencil);
     S{i}.neighbors = idx;
     S{i}.d = localinterpmat_1D(x_ext(idx),rbf_exp,deg);
 end
